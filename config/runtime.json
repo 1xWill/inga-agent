@@ -1,0 +1,349 @@
+{
+  "discovery": {
+    "shared": false,
+    "keywords": {
+      "include": [],
+      "includeOnly": false,
+      "skipCooldown": true,
+      "bonusConfidence": 0.1,
+      "excludeTags": [],
+      "search": {
+        "limitPerType": 2,
+        "pageMax": 2,
+        "sort": "trending"
+      }
+    },
+    "polling": {
+      "marketFetchLimit": 2,
+      "marketRefillMaxTries": 2,
+      "monitorMaxBuyPerTick": 3,
+      "marketFetchIntervalMinutes": 360,
+      "positionMonitorIntervalMinutes": 600
+    },
+    "marketData": {
+      "sort": "updatedAt",
+      "includeOrderBooks": true,
+      "includeOutcomePrices": true,
+      "updatedSinceMinutes": 1440,
+      "createdSinceMinutes": 43200,
+      "minTtlMinutes": 60,
+      "maxTtlMinutes": 64800,
+      "discoveryMode": "composite",
+      "compositeSorts": [
+        {
+          "sort": "endingSoon",
+          "take": 32
+        },
+        {
+          "sort": "updatedAt",
+          "take": 16
+        },
+        {
+          "sort": "volume",
+          "take": 12
+        },
+        {
+          "sort": "liquidity",
+          "take": 12
+        },
+        {
+          "sort": "trending",
+          "take": 12
+        }
+      ],
+      "seedOffsetStrategy": "random",
+      "compositeRandomOffsetMax": 120,
+      "endingSoon": {
+        "minTtlMinutes": 10,
+        "maxTtlMinutes": 5760
+      },
+      "maxCompositeProbes": 10,
+      "probeLogEvery": 2,
+      "requireClobTokenIdsForPaper": true,
+      "requireClobTokenIdsForLive": true,
+      "tokenResolver": {
+        "strategies": ["slug", "event", "question", "web"],
+        "validateWithBook": true
+      }
+    }
+  },
+  "cooldowns": {
+    "postDecisionMinutes": 480,
+    "discoveryMinutes": 720
+  },
+  "llm": {
+    "profiles": {
+      "quick": {
+        "openrouter": {
+          "maxTokens": 1000,
+          "temperature": 0.15,
+          "timeoutMs": 20000
+        }
+      },
+      "deep": {
+        "openrouter": {
+          "maxTokens": 1000,
+          "temperature": 0.1,
+          "timeoutMs": 45000
+        }
+      },
+      "position": {
+        "openrouter": {
+          "maxTokens": 1000,
+          "temperature": 0.15,
+          "timeoutMs": 20000
+        }
+      }
+    },
+    "research": {
+      "order": "liquidity_ttl_spread",
+      "preFilterInputCap": 4,
+      "preFilterOutputCap": 2,
+      "distributeSurvivors": true,
+      "strategy": "quick_then_deep_on_true_or_uncertain",
+      "groupDecisions": {
+        "enabled": true,
+        "maxGroupSize": 2
+      },
+      "quick": {
+        "evaluationStrategy": "per_sibling"
+      },
+      "webSearch": {
+        "quickMaxResults": 3,
+        "deepMaxResults": 4,
+        "monitorMaxResults": 4,
+        "excludeDomains": [
+          "polymarket.com",
+          "clob.polymarket.com",
+          "gamma-api.polymarket.com",
+          "youtube.com"
+        ]
+      }
+    },
+    "prompts": {
+      "decision": {
+        "quick": {
+          "system": [],
+          "user": []
+        },
+        "deep": {
+          "system": [],
+          "user": []
+        }
+      },
+      "monitor": {
+        "system": [],
+        "user": []
+      }
+    }
+  },
+  "decision": {
+    "tradeEvaluation": {
+      "decisionSchema": {
+        "fields": [
+          "marketId",
+          "title",
+          "outcomes",
+          "currentPrices",
+          "quickResearchSummary",
+          "trade",
+          "riskNotes",
+          "timestamp"
+        ]
+      },
+      "targetSelection": {
+        "minConfidence": 0.6,
+        "maxTargets": 5
+      },
+      "minEdgeBps": 250,
+      "gating": {
+        "maxSpreadPct": 0.05,
+        "minTopBookNotional": 10,
+        "liquidityLevels": 3,
+        "requireFullNotionalAtDepth": false,
+        "requireLiveDepthForPrefilter": true
+      },
+      "candidateMaxPerEvent": 6
+    },
+    "fees": {
+      "trading": {
+        "makerBps": 0,
+        "takerBps": 0
+      },
+      "mintRedeemBps": 0,
+      "mergeSplitBps": 0,
+      "gasUsdEstimate": 0.02,
+      "source": "clob_fee_rate",
+      "requireLiveFeeRate": false
+    },
+    "risk": {
+      "perTradeMax": 100,
+      "perMarketMaxPct": 0.2,
+      "perRunMaxPct": 0.6,
+      "dailyLossLimitPct": 0.1
+    },
+    "exits": {
+      "takeProfitPct": 0.25,
+      "stopLossPct": 0.15,
+      "maxTakeProfitPct": 0.35,
+      "maxStopLossPct": 0.25,
+      "maxHoldingMinutes": 10080,
+      "minHoldingMinutes": 5,
+      "priceFloor": 0.01,
+      "priceCeiling": 0.995,
+      "consecutiveTriggers": 2,
+      "minExitTopBookNotional": 25,
+      "resolutionGuardEnabled": false,
+      "resolutionGuardMinutes": 20
+    }
+  },
+  "execution": {
+    "strategy": "immediate",
+    "reserveBalance": true,
+    "priceRefresh": {
+      "enabled": true,
+      "maxAgeMinutes": 0.5
+    },
+    "slippageModel": {
+      "type": "depth_aware",
+      "levels": 3
+    },
+    "sizing": {
+      "mode": "auto_scale_to_depth",
+      "minNotional": 10,
+      "maxDepthLevels": 3
+    },
+    "rotationWhenNoBalance": {
+      "enabled": true
+    },
+    "rotationWhenNoHeadroom": {
+      "enabled": true,
+      "preferredOnly": true
+    },
+    "multiLeg": true,
+    "live": {
+      "dryRun": true,
+      "submitJitterMs": {
+        "min": 120,
+        "max": 360
+      },
+      "maxOrdersPerSecond": 1,
+      "autoCancel": {
+        "enabled": true,
+        "ttlMinutes": 0.5
+      },
+      "ordersRefresher": {
+        "intervalMinutes": 0.2
+      }
+    }
+  },
+  "portfolio": {
+    "balances": {
+      "initialBalance": 1000,
+      "baseCurrency": "USDC"
+    },
+    "marks": {
+      "enabled": true,
+      "intervalMinutes": 1,
+      "maxStalenessMinutes": 10,
+      "writer": "server"
+    },
+    "history": {
+      "enabled": true,
+      "intervalMinutes": 30,
+      "retention": {
+        "rawDays": 14,
+        "hourlyDays": 90,
+        "dailyDays": 365
+      },
+      "buckets": {
+        "shortRange": "30m",
+        "longRange": "4h"
+      },
+      "maxPointsPerSeries": 1200
+    }
+  },
+  "presentation": {
+    "ui": {
+      "maxOpenPages": 3,
+      "maxEvaluationPages": 30,
+      "maxActivityPages": 30,
+      "maxClosedPages": 20,
+      "minOpenQuantity": 0.1,
+      "filterSmallPositions": true,
+      "skipSmallPositionMarks": true
+    },
+    "charts": {
+      "yTicks": 6,
+      "yPaddingPct": 0.2,
+      "glyphsPerSeries": 40,
+      "endLabel": {
+        "minGapPx": 14
+      },
+      "timeFormat": {
+        "short": "MMM d HH:mm",
+        "long": "MMM d"
+      }
+    },
+    "evaluations": {
+      "ui": {
+        "includePrefiltered": false,
+        "includeFailed": false
+      },
+      "persist": {
+        "prefiltered": false,
+        "failed": false
+      },
+      "retention": {
+        "prefilteredDays": 1,
+        "failedDays": 1
+      }
+    }
+  },
+  "observability": {
+    "http": {
+      "retry": {
+        "retries": 5,
+        "minDelayMs": 2500,
+        "maxDelayMs": 15000,
+        "factor": 2
+      },
+      "timeoutMs": 30000,
+      "hostOverrides": {
+        "clob.polymarket.com": {
+          "retry": {
+            "retries": 3,
+            "minDelayMs": 5000,
+            "maxDelayMs": 30000,
+            "factor": 2
+          },
+          "circuitBreaker": {
+            "failureThreshold": 3,
+            "openMinutes": 1
+          }
+        }
+      },
+      "memoize": {
+        "clobOrderBookTtlMs": 5000,
+        "clobFeeRateTtlMs": 5000,
+        "clobTradesTtlMs": 60000
+      }
+    },
+    "logging": {
+      "level": "info",
+      "verbose": {
+        "markets": false,
+        "ai": false,
+        "providers": {
+          "polymarket": false,
+          "tokenResolver": false
+        }
+      },
+      "redact": {
+        "aiInput": false,
+        "aiOutput": false
+      },
+      "sampleRate": 1
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "defaults": {
+    "modelProvider": "openrouter",
+    "paperTrading": true,
+    "enabled": true,
+    "research": {
+      "quickProfile": "quick",
+      "deepProfile": "deep"
+    },
+    "execution": {
+      "maxOpenPositions": 8
+    }
+  },
+  "agents": [
+    {
+      "id": "agent_gpt",
+      "label": "GPT 5",
+      "logo": "/logos/gpt.png",
+      "model": "openai/gpt-oss-120b",
+      "walletPrivateKeyEnv": "POLY_WALLET_KEY_GPT",
+      "walletAddressEnv": "POLY_ADDRESS_GPT",
+      "chartStyle": { "color": "#fff", "glyph": "◎" }
+    },
+    {
+      "id": "agent_grok",
+      "label": "GROK 4",
+      "logo": "/logos/grok.png",
+      "model": "x-ai/grok-4-fast",
+      "walletPrivateKeyEnv": "POLY_WALLET_KEY_GROK",
+      "walletAddressEnv": "POLY_ADDRESS_GROK",
+      "chartStyle": { "color": "#fff", "glyph": "∅" }
+    },
+    {
+      "id": "agent_claude",
+      "label": "CLAUDE 4.5",
+      "logo": "/logos/claude.png",
+      "model": "anthropic/claude-haiku-4.5",
+      "walletPrivateKeyEnv": "POLY_WALLET_KEY_CLAUDE",
+      "walletAddressEnv": "POLY_ADDRESS_CLAUDE",
+      "chartStyle": { "color": "#D97757", "glyph": "✳︎" }
+    },
+    {
+      "id": "agent_ds",
+      "label": "DEEPSEEK V3.1",
+      "logo": "/logos/ds.png",
+      "model": "deepseek/deepseek-chat-v3.1",
+      "walletPrivateKeyEnv": "POLY_WALLET_KEY_DS",
+      "walletAddressEnv": "POLY_ADDRESS_DS",
+      "chartStyle": { "color": "#4D6BFE", "glyph": "◆" }
+    },
+    {
+      "id": "agent_qwen",
+      "label": "QWEN3 MAX",
+      "logo": "/logos/qwen.png",
+      "model": "qwen/qwen3-max",
+      "walletPrivateKeyEnv": "POLY_WALLET_KEY_QWEN",
+      "walletAddressEnv": "POLY_ADDRESS_QWEN",
+      "chartStyle": { "color": "#615CED", "glyph": "▽" }
+    }
+  ]
+}
